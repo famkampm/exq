@@ -1,4 +1,5 @@
 defmodule Exq.Dequeue.Local do
+  require Logger
   @behaviour Exq.Dequeue.Behaviour
 
   defmodule State do
@@ -16,14 +17,26 @@ defmodule Exq.Dequeue.Local do
   def stop(_), do: :ok
 
   @impl true
-  def available?(state), do: {:ok, state.current < state.max, state}
+  def available?(state) do
+    Logger.info("dequeue.local-state.available?.current:#{state.current}")
+    {:ok, state.current < state.max, state}
+  end
 
   @impl true
-  def dispatched(state), do: {:ok, %{state | current: state.current + 1}}
+  def dispatched(state) do
+    Logger.info("dequeue.local-state.dispatched.current:#{state.current}")
+    {:ok, %{state | current: state.current + 1}}
+  end
 
   @impl true
-  def processed(state), do: {:ok, %{state | current: state.current - 1}}
+  def processed(state) do
+    Logger.info("dequeue.local-state.processed.current:#{state.current}")
+    {:ok, %{state | current: state.current - 1}}
+  end
 
   @impl true
-  def failed(state), do: {:ok, %{state | current: state.current - 1}}
+  def failed(state) do
+    Logger.info("dequeue.local-state.failed.current:#{state.current}")
+    {:ok, %{state | current: state.current - 1}}
+  end
 end
